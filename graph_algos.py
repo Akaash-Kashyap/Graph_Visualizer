@@ -17,7 +17,7 @@ def BFS(G, s):
                 visited.add(neighbor)
                 queue.append(neighbor)
                 visited_edges.append((current, neighbor))
-    return visited_nodes, visited_edges
+    return (visited_nodes, visited_edges)
 
 def DFS(G, s):
     """Performs DFS on a graph and returns the order of visited nodes and edges"""
@@ -27,7 +27,7 @@ def DFS(G, s):
     visited = {s}
     while stack:
         current, parent = stack.pop()
-        print(parent)
+        # print(parent)
         visited_nodes.append(current)
 
         if parent is not None:
@@ -38,4 +38,4 @@ def DFS(G, s):
 
                 visited.add(neighbor)
                 stack.append((neighbor, current))
-    return visited_nodes, visited_edges
+    return (visited_nodes, visited_edges)
