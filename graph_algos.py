@@ -1,5 +1,7 @@
+# graph_algos (unweighted)
+# BFS
+# DFS
 from collections import deque
-import networkx as nx
 
 # BFS aglorithm
 def BFS(G, s):
@@ -17,7 +19,7 @@ def BFS(G, s):
                 visited.add(neighbor)
                 queue.append(neighbor)
                 visited_edges.append((current, neighbor))
-    return (visited_nodes, visited_edges)
+    return visited_nodes, visited_edges
 
 def DFS(G, s):
     """Performs DFS on a graph and returns the order of visited nodes and edges"""
@@ -38,4 +40,4 @@ def DFS(G, s):
 
                 visited.add(neighbor)
                 stack.append((neighbor, current))
-    return (visited_nodes, visited_edges)
+    return visited_nodes, visited_edges

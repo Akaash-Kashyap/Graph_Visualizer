@@ -40,4 +40,4 @@ Visualizes various algorithms on a given input graph and animates them to show n
 - Weighted graph support
   - including the weighted graph algorithms
 - Directed graph support
-- Example graphs 
+- Example graphs
