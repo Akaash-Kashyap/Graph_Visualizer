@@ -9,7 +9,7 @@ def init_tkinter():
     widgets are added here
     '''
     root.title("Graph Algorithm Animation in Tkinter")
-    root.geometry("1200x1000")
+    # root.geometry("1200x1000") # doesnt show buttons on mac
     # root.attributes('-fullscreen', True)
     # root.bind("<Escape>", lambda event: root.attributes("-fullscreen", False))
 
@@ -20,6 +20,7 @@ def init_tkinter():
     # Frame for buttons
     button_frame = tk.Frame(root)
     button_frame.pack(side=tk.RIGHT, fill=tk.Y)
+    
 
     # Add buttons to the frame
     bfs_button = tk.Button(button_frame, text="Run BFS", command=graph_animation.start_bfs)

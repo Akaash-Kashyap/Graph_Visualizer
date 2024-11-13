@@ -15,7 +15,7 @@ def init_graph(root):
     G = nx.Graph()
     edges = [(0,3),(0,2),(1,3), (1,2), (2,5), (2,6), (2,4), (5,7), (6,7), (4,7)]
     G.add_edges_from(edges)
-    G = nx.balanced_tree(r=2, h=5)
+    # G = nx.balanced_tree(r=2, h=5)
     # color scheme
     node_colors = {node: "lightgrey" for node in G.nodes}
     edge_colors = {edge: "gray" for edge in G.edges}
