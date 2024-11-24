@@ -7,13 +7,14 @@ from graph_algos import BFS, DFS
 import matplotlib.animation as animation
 
 
+# Global variables
 global root
 
+# Function to initialize the Tkinter window
+
 def init_tkinter():
+
     root = tk.Tk()
-    '''
-    widgets are added here
-    '''
     root.title("Graph Algorithm Animation in Tkinter")
     menubar = tk.Menu(root)
 
@@ -26,13 +27,18 @@ def init_tkinter():
     graph.add_command(label="Exit", command=root.destroy)
     root.config(menu = menubar)
 
+    # size of window (not implemented)
     # root.geometry("1200x1000") # doesnt show buttons on mac
     # root.attributes('-fullscreen', True)
     # root.bind("<Escape>", lambda event: root.attributes("-fullscreen", False))
 
+    # Frame for graph
+    #TODO Take a look at this (is it needed?)
     graph_animation.init_graph(root)
 
-    
+    ##################
+    ### UI buttons ###
+    ##################
 
     # Frame for buttons
     button_frame = tk.Frame(root)
@@ -49,30 +55,48 @@ def init_tkinter():
     dfs_button = tk.Button(button_frame, text="Run DFS", command=graph_animation.start_dfs)
     dfs_button.pack(pady=10, padx=15)
 
+    #! do i still need this?
     # init the main screen
     # graph_animation.initialize_plot()
 
     # start Tkinter event loop
     root.mainloop()
 
+# List to store the tuples
 edges = []
 
-
+# old method of starting program
 # init_tkinter()
 
+
+
+# New method of starting program
 # Creating a setup page
+
+"""The setup_page function initializes the setup 
+interface for the graph algorithm visualizer. It 
+creates a Tkinter window, sets up the graph structure,
+ and defines various helper functions for adding and 
+ deleting graph edges, updating the graph visualization,
+   and handling user interactions. This function serves as 
+   the starting point for configuring the graph before 
+   running any algorithms."""
 def setup_page():
-    # Some functions
-    # Function to add a tuple to the list
+
+    # Global variables
     type = None
     G = nx.Graph()
     root = tk.Tk()
 
+    # Lists to store the colors of nodes and edges
     node_colors = {node: "lightgrey" for node in G.nodes}
     edge_colors = {edge: "gray" for edge in G.edges}
+
+    # Animation variables
     current_anim = None
     animation_running = False
 
+    # Function to show the side panel based on the graph type
     def show_side_panel(t):
         # if t == -1, Not implemented 
         # if t == 0, undirected graph, unweighted
@@ -113,6 +137,7 @@ def setup_page():
         else:
             tk.messagebox.showerror("Idek What happned but heres t", t)
     
+    # Function to add a tuple to the list
     # need to add support for adding 3 tuples (third being weight)
     def add_tuple():
         entry_text = entry.get().strip()
@@ -152,10 +177,11 @@ def setup_page():
             listbox.insert(tk.END, item)  # Add each tuple to the listbox
         update_preview()
 
+    # Function to update the graph preview
     def update_preview():
         global pos
         ax.clear()
-        # ax.set_title("Graph Visualization")
+        ax.set_title("Graph Visualization - Setup")
         ax.axis("off")
         # Draw the graph with NetworkX
         pos = nx.spring_layout(G)  # Layout for the graph
@@ -164,7 +190,7 @@ def setup_page():
         # Redraw the canvas
         canvas.draw()
     
-        # Button commands
+    # Button commands
     def start_bfs():
         # pass
         name = "BFS"
@@ -178,7 +204,7 @@ def setup_page():
         nodes, edges = DFS(G, s=0)
         run_animation(nodes, edges, name)
 
-
+    # Function to run the animation
     def run_animation(v_nodes, v_edges, algorithm_name):
         nonlocal G, animation_running
         global current_anim
@@ -188,9 +214,11 @@ def setup_page():
             return
         animation_running = True
 
+        # Reset the node and edge colors
         node_colors.update({node: "lightgrey" for node in G.nodes()})
         edge_colors.update({edge: "gray" for edge in G.edges()})
         
+        # Define the animation step function
         def step(frame):
             # update the node and edge colors for the current frame
             current_node = v_nodes[frame]
@@ -212,10 +240,11 @@ def setup_page():
             if frame == len(v_nodes) - 1:
                 on_animation_complete()
         
+        # Function to run when the animation is complete
         def on_animation_complete():
             nonlocal animation_running
             animation_running = False
-        
+        # Run the animation
         current_anim = animation.FuncAnimation(fig, step, frames=len(v_nodes), repeat=False, interval=500)
         canvas.draw()
         
