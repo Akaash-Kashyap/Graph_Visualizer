@@ -10,10 +10,10 @@ import tkinter as tk
 current_anim = None
 animation_running = False
 
-def init_graph(root):
+def init_graph(root,edges=[(0,3),(0,2),(1,3), (1,2), (2,5), (2,6), (2,4), (5,7), (6,7), (4,7)]):
     global G, pos, node_colors, edge_colors, fig, ax, canvas
     G = nx.Graph()
-    edges = [(0,3),(0,2),(1,3), (1,2), (2,5), (2,6), (2,4), (5,7), (6,7), (4,7)]
+    # edges = [(0,3),(0,2),(1,3), (1,2), (2,5), (2,6), (2,4), (5,7), (6,7), (4,7)]
     G.add_edges_from(edges)
     # G = nx.balanced_tree(r=2, h=5)
     # color scheme
@@ -22,7 +22,7 @@ def init_graph(root):
 
     fig, ax = plt.subplots()
     canvas = FigureCanvasTkAgg(fig, master=root)
-    canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
 
     pos = nx.spring_layout(G, k=2, scale=2.5, iterations=1000)
 
