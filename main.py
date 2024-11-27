@@ -3,7 +3,7 @@ import graph_animation
 import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from graph_algos import BFS, DFS
+from graph_algos import BFS, DFS, dijkstra
 import matplotlib.animation as animation
 
 
@@ -104,9 +104,46 @@ def setup_page():
         # if t == 2, undirected, weighted
         # if t == 3, directed, weighted
         nonlocal G 
+
         if t == -1:
             tk.messagebox.showerror("Not implemented, try the other buttons")
             return
+        
+
+        # UI for Tuple input (side panel)
+        # Entry for adding tuples
+        enter_text_help = "Enter a tuple in the form (u, v)" if t == 0 or t == 1 else "Enter a tuple in the form (u, v, w)"
+        entry_label = tk.Label(side_panel, text=enter_text_help)
+        entry_label.pack(pady=5)
+        tuple_start_label = tk.Label(side_panel, text="algorithm starts from 0, make sure you include 0 in the tuples")
+        tuple_start_label.pack(pady=5)
+
+        global entry
+        entry = tk.Entry(side_panel, width=30)
+        entry.pack(pady=5)
+
+        if t == 0 or t == 1:
+            add_button = tk.Button(side_panel, text="Add Tuple", command=add_tuple2)
+        else:
+            add_button = tk.Button(side_panel, text="Add Tuple", command=add_tuple3)
+        add_button.pack(pady=5)
+
+        # Listbox to display tuples
+        listbox_label = tk.Label(side_panel, text="Tuples List:")
+        listbox_label.pack(pady=5)
+        global listbox
+        listbox = tk.Listbox(side_panel, width=30, height=10)
+        listbox.pack(pady=5)
+
+
+        # Button to delete a tuple
+        if t == 0 or t == 1:
+            delete_button = tk.Button(side_panel, text="Delete Selected Tuple",width=25, command=delete_tuple2)
+        else:
+            delete_button = tk.Button(side_panel, text="Delete Selected Tuple",width=25, command=delete_tuple3)    
+        delete_button.pack(pady=10)
+
+
         
         # show side panel
         side_panel.pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=10)
@@ -114,6 +151,7 @@ def setup_page():
         graph_choose.pack_forget()
         # we can show the graph here
         canvas_widget.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        global type
         type = t
         # G = None     
         if t == 0:
@@ -128,18 +166,55 @@ def setup_page():
         elif t == 1:
             G = nx.DiGraph()
             root.title("Setting up directed unweighted graph")
+            # setup buttons for BFS DFS
+            bfs_button = tk.Button(side_panel, text='BFS', command=start_bfs)
+            dfs_button = tk.Button(side_panel, text='DFS', command=start_dfs)
+            bfs_button.pack(side=tk.LEFT)
+            dfs_button.pack(side=tk.RIGHT)
         elif t == 2:
             G = nx.Graph()
             root.title("Setting up undirected weighted graph")
+            # setup buttons for BFS DFS
+            dijkstra_button = tk.Button(side_panel, text='Dijkstra', command=start_dijkstra)
+            dijkstra_button.pack(side=tk.LEFT)
         elif t == 3:
             G = nx.DiGraph()
             root.title("Setting up directed weighted graph")
         else:
             tk.messagebox.showerror("Idek What happned but heres t", t)
     
+    # 3 tuple functions
     # Function to add a tuple to the list
-    # need to add support for adding 3 tuples (third being weight)
-    def add_tuple():
+    def add_tuple3():
+        entry_text = entry.get().strip()
+        try:
+            # Validate the input format
+            new_tuple = eval(entry_text)
+            if isinstance(new_tuple, tuple) and len(new_tuple) == 3:
+                # Add the tuple to the list
+                G.add_edge(new_tuple[0], new_tuple[1], weight=new_tuple[2]) 
+
+                edges.append(new_tuple)
+                update_listbox()
+                entry.delete(0, tk.END)  # Clear the entry field
+            else:
+                raise ValueError
+        except:
+            tk.messagebox.showerror("Invalid Input", "Please enter a tuple in the form (u, v, w).")
+    # Function to delete a selected tuple
+    def delete_tuple3():
+        selected_index = listbox.curselection()
+        if selected_index:
+            index = selected_index[0]
+            G.remove_edge(edges[index][0], edges[index][1])
+            del edges[index]
+            update_listbox()
+        else:
+            tk.messagebox.showwarning("No Selection", "Please select a tuple to delete.")
+
+    # 2 tuple functions
+    # Function to add a tuple to the list
+    def add_tuple2():
         entry_text = entry.get().strip()
         try:
             # Validate the input format
@@ -153,10 +228,10 @@ def setup_page():
             else:
                 raise ValueError
         except:
-            tk.messagebox.showerror("Invalid Input", "Please enter a tuple in the form (x, y).")
+            tk.messagebox.showerror("Invalid Input", "Please enter a tuple in the form (u, v).")
 
     # Function to delete a selected tuple
-    def delete_tuple():
+    def delete_tuple2():
         selected_index = listbox.curselection()
         if selected_index:
             index = selected_index[0]
@@ -180,13 +255,19 @@ def setup_page():
     # Function to update the graph preview
     def update_preview():
         global pos
+        global type
         ax.clear()
         ax.set_title("Graph Visualization - Setup")
         ax.axis("off")
         # Draw the graph with NetworkX
         pos = nx.spring_layout(G)  # Layout for the graph
-        nx.draw(G, pos, ax=ax, with_labels=True, node_color="lightgrey", edge_color="gray", font_weight="bold")
-        
+        nx.draw(G, pos, ax=ax, with_labels=True, node_color="lightgrey", edge_color="gray", font_weight="bold", )
+        # Add edge labels for weighted graphs
+        # print("TYPE: ", type)
+        if type == 2 or type == 3:
+            # print("Adding edge labels")
+            labels = nx.get_edge_attributes(G, 'weight')
+            nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, ax=ax)
         # Redraw the canvas
         canvas.draw()
     
@@ -202,6 +283,12 @@ def setup_page():
         # pass
         name = "DFS"
         nodes, edges = DFS(G, s=0)
+        run_animation(nodes, edges, name)
+
+    def start_dijkstra():
+        # pass
+        name = "Dijkstra"
+        nodes, edges = dijkstra(G, s=0)
         run_animation(nodes, edges, name)
 
     # Function to run the animation
@@ -236,6 +323,11 @@ def setup_page():
                     edge_color=[edge_colors.get(e, "gray") for e in G.edges],
                     font_weight="bold",
                     arrowsize=15)
+            global type
+            if type == 2 or type == 3:
+                # print("Adding edge labels")
+                labels = nx.get_edge_attributes(G, 'weight')
+                nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, ax=ax)
             ax.set_title(algorithm_name + f" - Visiting Node {current_node}")
             if frame == len(v_nodes) - 1:
                 on_animation_complete()
@@ -290,30 +382,6 @@ def setup_page():
     direct_unweight_btn.pack(pady=5)
     undirect_weight_btn.pack(pady=5)
     direct_weight_btn.pack(pady=5)
-
-
-
-    # Entry for adding tuples
-    entry_label = tk.Label(side_panel, text="Enter Tuple (x, y):")
-    entry_label.pack(pady=5)
-
-    entry = tk.Entry(side_panel, width=30)
-    entry.pack(pady=5)
-
-    add_button = tk.Button(side_panel, text="Add Tuple", command=add_tuple)
-    add_button.pack(pady=5)
-
-    # Listbox to display tuples
-    listbox_label = tk.Label(side_panel, text="Tuples List:")
-    listbox_label.pack(pady=5)
-
-    listbox = tk.Listbox(side_panel, width=30, height=10)
-    listbox.pack(pady=5)
-
-
-    # Button to delete a tuple
-    delete_button = tk.Button(side_panel, text="Delete Selected Tuple",width=25, command=delete_tuple)
-    delete_button.pack(pady=10)
 
     
     fig, ax = plt.subplots(figsize=(5, 5))
