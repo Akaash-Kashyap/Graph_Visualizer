@@ -67,6 +67,7 @@ def dijkstra(G, s):
     """Performs Dijkstra's algorithm on a graph and returns the order of visited nodes and edges."""
     visited_nodes = []
     visited_edges = []
+    visited = set()
     distances = {node: float("inf") for node in G.nodes}
     distances[s] = 0
     priority_queue = [(0, s)]  # (distance, node)
@@ -74,13 +75,15 @@ def dijkstra(G, s):
     while priority_queue:
         current_distance, current_node = heapq.heappop(priority_queue)
         
-        if current_node in visited_nodes:
+        if current_node in visited:
             continue
 
+        visited.add(current_node)
         visited_nodes.append(current_node)
         
         for neighbor in G.neighbors(current_node):
-            edge_weight = G[current_node][neighbor]["weight"]
+            # default weight to 1 if not specified on the edge
+            edge_weight = G[current_node][neighbor].get("weight", 1)
             new_distance = current_distance + edge_weight
             
             if new_distance < distances[neighbor]:
