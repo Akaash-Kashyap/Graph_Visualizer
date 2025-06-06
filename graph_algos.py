@@ -4,7 +4,7 @@
 from collections import deque
 import heapq
 
-# BFS aglorithm
+# BFS algorithm
 def BFS(G, s):
     """Performs BFS on a graph and returns the order of visited nodes and edges."""
     visited_nodes = []
