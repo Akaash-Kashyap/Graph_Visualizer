@@ -17,10 +17,11 @@ Visualizes various algorithms on a given input graph and animates them to show n
 
 ## Requirements
 
-Must have Tkinter installed
+Must have Tkinter installed. You can install Tk via pip or your system
+package manager:
 
 ```bash
-pip install Tkinter
+pip install tk  # or install the python3-tk package for your OS
 ```
 
 ## Unweighted graphs
@@ -35,12 +36,14 @@ Depth-First Search (DFS) is a graph traversal algorithm that explores as far as 
 
 ## Weighted Graphs
 
-(add description)
+Algorithms on weighted graphs determine the lowest-cost paths between
+nodes. The visualizer currently supports Dijkstra's algorithm.
 
 ### Dijkstra's algorithm
 
-(not yet implemented)\
-(add description)
+This algorithm is implemented and animated in the application.
+It finds the shortest path from a source node to all other nodes in a
+graph with non-negative edge weights.
 
 ### Bellman-Ford
 
