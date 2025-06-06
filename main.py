@@ -294,7 +294,7 @@ def setup_page():
     # Function to run the animation
     def run_animation(v_nodes, v_edges, algorithm_name):
         nonlocal G, animation_running
-        global current_anim
+        nonlocal current_anim
         # Stop any existing animation
         # print(animation_running)
         if animation_running:
